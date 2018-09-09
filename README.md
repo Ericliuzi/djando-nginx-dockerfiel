@@ -1,41 +1,24 @@
-# Django, uWSGI and Nginx in a container, using Supervisord
+Django，uWSGI和Nginx在一个容器中，使用Supervisord
+这个Dockerfile向您展示了如何使用uWSGI和Nginx为Django构建一个相当标准和快速的Docker容器。
 
-This Dockerfile shows you *how* to build a Docker container with a fairly standard
-and speedy setup for Django with uWSGI and Nginx.
+来自许多基准测试的uWSGI已经证明是python应用程序的最快服务器，并且具有很大的灵活性。但请注意，我们尚未对此软件包进行任何形式的优化。根据您的需要进行修改。
 
-uWSGI from a number of benchmarks has shown to be the fastest server 
-for python applications and allows lots of flexibility. But note that we have
-not done any form of optimalization on this package. Modify it to your needs.
+Nginx已经成为提供Web应用程序的标准，并且具有使用uWSGI协议与uWSGI通信的额外好处，进一步消除了开销。
 
-Nginx has become the standard for serving up web applications and has the 
-additional benefit that it can talk to uWSGI using the uWSGI protocol, further
-eliminating overhead. 
+大多数此设置来自https://uwsgi.readthedocs.org/en/latest/tutorials/Django_and_nginx.html上的优秀教程
 
-Most of this setup comes from the excellent tutorial on 
-https://uwsgi.readthedocs.org/en/latest/tutorials/Django_and_nginx.html
+使用此存储库的最佳方法是作为示例。将存储库克隆到您喜欢的位置，然后开始添加文件/根据需要更改配置。一旦你真正开始制作你的项目，你会发现你已经触及了大多数文件。
 
-The best way to use this repository is as an example. Clone the repository to 
-a location of your liking, and start adding your files / change the configuration 
-as needed. Once you're really into making your project you'll notice you've 
-touched most files here.
+建立并运行
+用python3构建
+docker build -t webapp .
+docker run -d -p 80:80 webapp
+转到127.0.0.1查看是否有效
+用python2构建
+docker build -f Dockerfile-py2 -t webapp .
+docker run -d -p 80:80 webapp
+转到127.0.0.1查看是否有效
+如何插入您的应用程序
+在/ app中，目前使用startproject创建了一个django项目。您可能希望将/ app的内容替换为django项目的根目录。然后还从Dockerfile中删除django-app startproject行
 
-### Build and run
-#### Build with python3
-* `docker build -t webapp .`
-* `docker run -d -p 80:80 webapp`
-* go to 127.0.0.1 to see if works
-
-#### Build with python2
-* `docker build -f Dockerfile-py2 -t webapp .`
-* `docker run -d -p 80:80 webapp`
-* go to 127.0.0.1 to see if works
-
-### How to insert your application
-
-In /app currently a django project is created with startproject. You will
-probably want to replace the content of /app with the root of your django
-project. Then also remove the line of django-app startproject from the 
-Dockerfile
-
-uWSGI chdirs to /app so in uwsgi.ini you will need to make sure the python path
-to the wsgi.py file is relative to that.
+uWSGI chdirs到/ app所以在uwsgi.ini中你需要确保wsgi.py文件的python路径是相对的。
